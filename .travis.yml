@@ -1,0 +1,31 @@
+language: bash
+services: docker
+
+env:
+  - VERSION=9.6
+  - VERSION=9.6 VARIANT=alpine
+  - VERSION=9.5
+  - VERSION=9.5 VARIANT=alpine
+  - VERSION=9.4
+  - VERSION=9.4 VARIANT=alpine
+  - VERSION=9.3
+  - VERSION=9.3 VARIANT=alpine
+  - VERSION=9.2
+  - VERSION=9.2 VARIANT=alpine
+
+before_script:
+  - env | sort
+  - cd "$VERSION/$VARIANT"
+  - image="postgres:${VERSION}${VARIANT:+-${VARIANT}}"
+
+script:
+  - |
+    (
+      travis_retry docker build -t "$image" .
+    )
+
+after_script:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker push USER/REPO;
+    fi

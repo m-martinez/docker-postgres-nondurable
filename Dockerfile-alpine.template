@@ -1,0 +1,6 @@
+FROM postgres:%%PG_VERSION%%-alpine
+
+# Update config with non-durable settings (fsync, synchronous_commit|full_page_writes)
+# See: https://www.postgresql.org/docs/%%PG_VERSION%%/static/non-durability.html
+RUN sed -ri "s!^#?(fsync|synchronous_commit|full_page_writes)\s*=\s*\S+.*!\1 = off!" /usr/local/share/postgresql/postgresql.conf.sample
+
